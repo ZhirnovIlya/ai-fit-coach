@@ -2,12 +2,14 @@ import { useState } from 'react';
 import { Layout } from '@/components/layout/Layout';
 import { ExerciseCard } from '@/components/exercises/ExerciseCard';
 import { ExerciseDetail } from '@/components/exercises/ExerciseDetail';
-import { exercises, muscleGroups, Exercise } from '@/lib/data';
+import { muscleGroups, Exercise } from '@/lib/data';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Search } from 'lucide-react';
+import { Search, Heart } from 'lucide-react';
+import { useFitnessData } from '@/providers/FitnessDataProvider';
 
 export default function Exercises() {
+  const { exercises, favorites, toggleFavorite } = useFitnessData();
   const [selectedExercise, setSelectedExercise] = useState<Exercise | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedMuscle, setSelectedMuscle] = useState('all');
@@ -28,6 +30,10 @@ export default function Exercises() {
           <p className="text-muted-foreground">
             Изучите технику с AI-подсказками и добавьте в тренировку
           </p>
+          <div className="flex items-center gap-2 text-sm text-muted-foreground mt-2">
+            <Heart className="h-4 w-4 text-primary" />
+            {favorites.length > 0 ? `${favorites.length} в избранном` : 'Добавляйте любимые движения'}
+          </div>
         </div>
 
         {/* Filters */}
@@ -63,6 +69,8 @@ export default function Exercises() {
               key={exercise.id}
               exercise={exercise}
               onClick={() => setSelectedExercise(exercise)}
+              isFavorite={favorites.includes(exercise.id)}
+              onToggleFavorite={() => toggleFavorite(exercise.id)}
             />
           ))}
         </div>

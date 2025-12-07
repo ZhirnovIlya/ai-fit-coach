@@ -1,33 +1,19 @@
 import { Layout } from '@/components/layout/Layout';
 import { WorkoutLogger } from '@/components/workout/WorkoutLogger';
-import { Button } from '@/components/ui/button';
-import { Video, Brain, Clock, Target } from 'lucide-react';
-import { toast } from '@/hooks/use-toast';
-
-const features = [
-  {
-    icon: Video,
-    title: 'Видеоанализ в реальном времени',
-    description: 'AI анализирует вашу технику через камеру и даёт мгновенные подсказки'
-  },
-  {
-    icon: Brain,
-    title: 'Умные рекомендации',
-    description: 'Система помнит ваш прогресс и подбирает оптимальную нагрузку'
-  },
-  {
-    icon: Clock,
-    title: 'Таймер восстановления',
-    description: 'AI определяет идеальное время отдыха на основе вашего пульса'
-  },
-  {
-    icon: Target,
-    title: 'Персональные цели',
-    description: 'Отслеживание прогресса к вашим индивидуальным целям'
-  }
-];
+import { AiTechniqueAnalyzer } from '@/components/workout/AiTechniqueAnalyzer';
+import { Badge } from '@/components/ui/badge';
+import { useFitnessData } from '@/providers/FitnessDataProvider';
+import { Brain } from 'lucide-react';
 
 export default function Workout() {
+  const { workoutLogs, aiReports } = useFitnessData();
+
+  const totalExercises = workoutLogs.length;
+  const totalSets = workoutLogs.reduce((acc, log) => acc + log.sets.length, 0);
+  const avgScore = aiReports.length
+    ? Math.round(aiReports.reduce((acc, r) => acc + r.score, 0) / aiReports.length)
+    : null;
+
   return (
     <Layout>
       <div className="container py-8">
@@ -42,58 +28,62 @@ export default function Workout() {
           {/* Workout Logger */}
           <WorkoutLogger />
 
-          {/* AI Features Preview */}
+          {/* AI Features & history */}
           <div className="space-y-6">
+            <AiTechniqueAnalyzer />
+
             <div className="rounded-2xl border bg-card p-6">
-              <h2 className="text-xl font-bold mb-4">AI-функции</h2>
-              <p className="text-muted-foreground mb-6">
-                Подключите камеру для анализа техники в реальном времени
-              </p>
-
-              <Button 
-                className="w-full gap-2 mb-6 bg-gradient-energy hover:opacity-90"
-                onClick={() => {
-                  toast({
-                    title: 'Скоро!',
-                    description: 'AI-анализ видео появится в следующем обновлении. Оставайтесь на связи!'
-                  });
-                }}
-              >
-                <Video className="h-4 w-4" />
-                Включить AI-камеру
-              </Button>
-
-              <div className="space-y-4">
-                {features.map((feature, index) => (
-                  <div key={index} className="flex items-start gap-3 p-3 rounded-lg bg-muted/50">
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-accent">
-                      <feature.icon className="h-5 w-5 text-primary" />
-                    </div>
-                    <div>
-                      <h3 className="font-medium">{feature.title}</h3>
-                      <p className="text-sm text-muted-foreground">{feature.description}</p>
-                    </div>
-                  </div>
-                ))}
+              <h3 className="text-lg font-semibold mb-4">Быстрая статистика</h3>
+              <div className="grid grid-cols-3 gap-4 text-center">
+                <div className="space-y-1">
+                  <p className="text-2xl font-bold text-primary">{totalExercises}</p>
+                  <p className="text-sm text-muted-foreground">Записанных упражнений</p>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-2xl font-bold">{totalSets}</p>
+                  <p className="text-sm text-muted-foreground">Подходов сохранено</p>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-2xl font-bold">{avgScore ?? '—'}</p>
+                  <p className="text-sm text-muted-foreground">Средний AI-оценка</p>
+                </div>
               </div>
             </div>
 
-            {/* Quick Stats */}
-            <div className="rounded-2xl border bg-card p-6">
-              <h3 className="font-medium mb-4">Статистика сегодня</h3>
-              <div className="grid grid-cols-3 gap-4 text-center">
-                <div>
-                  <p className="text-2xl font-bold text-primary">0</p>
-                  <p className="text-sm text-muted-foreground">Упражнений</p>
-                </div>
-                <div>
-                  <p className="text-2xl font-bold">0</p>
-                  <p className="text-sm text-muted-foreground">Подходов</p>
-                </div>
-                <div>
-                  <p className="text-2xl font-bold">0</p>
-                  <p className="text-sm text-muted-foreground">мин</p>
-                </div>
+            <div className="rounded-2xl border bg-card p-6 space-y-3">
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-semibold">Последние AI-отчёты</h3>
+                <Badge variant="outline" className="gap-2">
+                  <Brain className="h-4 w-4" /> {aiReports.length} анализов
+                </Badge>
+              </div>
+              {aiReports.length === 0 && (
+                <p className="text-sm text-muted-foreground">Запустите анализ, чтобы получить отчёты по технике.</p>
+              )}
+              <div className="space-y-3">
+                {aiReports.slice(0, 3).map((report) => (
+                  <div key={report.id} className="rounded-xl border bg-muted/40 p-3">
+                    <div className="flex items-center justify-between gap-2">
+                      <div>
+                        <p className="text-sm text-muted-foreground">{report.exerciseName}</p>
+                        <p className="font-semibold">{report.verdict}</p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Brain className="h-4 w-4 text-primary" />
+                        <span className="text-lg font-bold">{report.score}</span>
+                      </div>
+                    </div>
+                    {report.focusAreas.length > 0 && (
+                      <div className="flex flex-wrap gap-2 mt-2">
+                        {report.focusAreas.map((area) => (
+                          <Badge key={area} variant="secondary" className="text-xs">
+                            {area}
+                          </Badge>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ))}
               </div>
             </div>
           </div>

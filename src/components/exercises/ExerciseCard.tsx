@@ -6,6 +6,8 @@ import { cn } from '@/lib/utils';
 interface ExerciseCardProps {
   exercise: Exercise;
   onClick?: () => void;
+  isFavorite?: boolean;
+  onToggleFavorite?: () => void;
 }
 
 const difficultyColors = {
@@ -23,7 +25,7 @@ const muscleIcons: Record<string, string> = {
   core: '🔥'
 };
 
-export function ExerciseCard({ exercise, onClick }: ExerciseCardProps) {
+export function ExerciseCard({ exercise, onClick, isFavorite, onToggleFavorite }: ExerciseCardProps) {
   return (
     <button
       onClick={onClick}
@@ -53,6 +55,27 @@ export function ExerciseCard({ exercise, onClick }: ExerciseCardProps) {
             >
               {exercise.difficultyRu}
             </Badge>
+            {exercise.equipment?.slice(0, 1).map((item) => (
+              <Badge key={item} variant="secondary" className="text-xs">
+                {item}
+              </Badge>
+            ))}
+            {onToggleFavorite && (
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onToggleFavorite();
+                }}
+                aria-label={isFavorite ? 'Убрать из избранного' : 'Добавить в избранное'}
+                className={cn(
+                  'ml-auto inline-flex items-center gap-1 rounded-full border px-3 py-1 text-xs transition-colors',
+                  isFavorite ? 'border-primary/40 bg-primary/10 text-primary' : 'border-border hover:border-primary/50'
+                )}
+              >
+                {isFavorite ? 'В избранном' : 'В избранное'}
+              </button>
+            )}
           </div>
         </div>
       </div>

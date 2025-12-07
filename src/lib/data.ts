@@ -11,6 +11,11 @@ export interface Exercise {
   description: string;
   tips: string[];
   image?: string;
+  equipment?: string[];
+  primaryMuscles?: string[];
+  secondaryMuscles?: string[];
+  aiChecks?: string[];
+  videoDemo?: string;
 }
 
 export interface WorkoutLog {
@@ -70,7 +75,11 @@ export const exercises: Exercise[] = [
       'Колени не должны выходить за носки',
       'Опускайтесь до параллели с полом',
       'Дышите: вдох вниз, выдох вверх'
-    ]
+    ],
+    equipment: ['Штанга', 'Стойки'],
+    primaryMuscles: ['Квадрицепс', 'Ягодичные'],
+    secondaryMuscles: ['Кор', 'Задняя поверхность бедра'],
+    aiChecks: ['Глубина приседа', 'Стабильность коленей', 'Положение корпуса']
   },
   {
     id: 'bench-press',
@@ -86,7 +95,11 @@ export const exercises: Exercise[] = [
       'Опускайте штангу к нижней части груди',
       'Локти под углом 45° к телу',
       'Не отрывайте ягодицы от скамьи'
-    ]
+    ],
+    equipment: ['Скамья', 'Штанга'],
+    primaryMuscles: ['Грудь'],
+    secondaryMuscles: ['Трицепс', 'Передняя дельта'],
+    aiChecks: ['Стабильность лопаток', 'Траектория штанги']
   },
   {
     id: 'deadlift',
@@ -102,7 +115,11 @@ export const exercises: Exercise[] = [
       'Штанга движется вдоль ног',
       'Толкайтесь ногами от пола',
       'Не округляйте поясницу'
-    ]
+    ],
+    equipment: ['Штанга', 'Гриф'],
+    primaryMuscles: ['Задняя поверхность бедра', 'Ягодичные'],
+    secondaryMuscles: ['Эректоры спины', 'Трапеции'],
+    aiChecks: ['Хип-хиндж', 'Стабильность спины']
   },
   {
     id: 'pull-up',
@@ -118,7 +135,11 @@ export const exercises: Exercise[] = [
       'Тяните локти вниз',
       'Поднимайтесь до подбородка над перекладиной',
       'Контролируйте спуск'
-    ]
+    ],
+    equipment: ['Турник'],
+    primaryMuscles: ['Широчайшие'],
+    secondaryMuscles: ['Бицепс', 'Задняя дельта'],
+    aiChecks: ['Скорость эксцентрической фазы', 'Симметрия захвата']
   },
   {
     id: 'overhead-press',
@@ -134,7 +155,11 @@ export const exercises: Exercise[] = [
       'Не прогибайте поясницу',
       'Выжимайте штангу строго вверх',
       'Голова слегка отклоняется назад'
-    ]
+    ],
+    equipment: ['Штанга', 'Гантели'],
+    primaryMuscles: ['Плечи'],
+    secondaryMuscles: ['Трицепс', 'Кор'],
+    aiChecks: ['Линия пресса', 'Амплитуда движения']
   },
   {
     id: 'plank',
@@ -150,7 +175,127 @@ export const exercises: Exercise[] = [
       'Не поднимайте таз',
       'Напрягите пресс и ягодицы',
       'Дышите равномерно'
-    ]
+    ],
+    equipment: ['Коврик'],
+    primaryMuscles: ['Пресс'],
+    secondaryMuscles: ['Ягодичные', 'Плечи'],
+    aiChecks: ['Линия корпуса']
+  },
+  {
+    id: 'push-up',
+    name: 'Push-Up',
+    nameRu: 'Отжимания',
+    muscleGroup: 'chest',
+    muscleGroupRu: 'Грудь',
+    difficulty: 'beginner',
+    difficultyRu: 'Начальный',
+    description: 'Базовое упражнение с собственным весом для развития груди, трицепсов и плеч.',
+    tips: [
+      'Держите корпус прямым',
+      'Локти под углом 45°',
+      'Опускайтесь до параллели',
+      'Сохраняйте контроль внизу'
+    ],
+    equipment: ['Собственный вес'],
+    primaryMuscles: ['Грудь'],
+    secondaryMuscles: ['Трицепс', 'Плечи'],
+    aiChecks: ['Амплитуда', 'Провисание корпуса'],
+    videoDemo: 'https://www.youtube.com/watch?v=_l3ySVKYVJ8'
+  },
+  {
+    id: 'hip-thrust',
+    name: 'Hip Thrust',
+    nameRu: 'Ягодичный мост',
+    muscleGroup: 'legs',
+    muscleGroupRu: 'Ноги',
+    difficulty: 'intermediate',
+    difficultyRu: 'Средний',
+    description: 'Упражнение для целевой проработки ягодичных мышц и задней поверхности бедра.',
+    tips: [
+      'Держите подбородок вниз',
+      'Толкайте пол пятками',
+      'Фиксируйте пик на 1-2 секунды'
+    ],
+    equipment: ['Скамья', 'Штанга/гантель'],
+    primaryMuscles: ['Ягодичные'],
+    secondaryMuscles: ['Задняя поверхность бедра'],
+    aiChecks: ['Пиковое сокращение', 'Контроль коленей']
+  },
+  {
+    id: 'barbell-row',
+    name: 'Bent-Over Row',
+    nameRu: 'Тяга штанги в наклоне',
+    muscleGroup: 'back',
+    muscleGroupRu: 'Спина',
+    difficulty: 'intermediate',
+    difficultyRu: 'Средний',
+    description: 'Тяговое упражнение для развития средней спины, бицепсов и задних дельт.',
+    tips: [
+      'Кор напряжён, спина прямая',
+      'Тяните локтями назад',
+      'Фиксируйте паузу в верхней точке'
+    ],
+    equipment: ['Штанга'],
+    primaryMuscles: ['Средняя спина'],
+    secondaryMuscles: ['Бицепс', 'Задняя дельта'],
+    aiChecks: ['Наклон корпуса', 'Стабильность корпуса']
+  },
+  {
+    id: 'face-pull',
+    name: 'Face Pull',
+    nameRu: 'Тяга к лицу',
+    muscleGroup: 'shoulders',
+    muscleGroupRu: 'Плечи',
+    difficulty: 'beginner',
+    difficultyRu: 'Начальный',
+    description: 'Изолирующее упражнение для задних дельт и внешней ротации плеча.',
+    tips: [
+      'Держите корпус вертикально',
+      'Разводите руки в стороны',
+      'Контролируйте наружную ротацию'
+    ],
+    equipment: ['Блок', 'Резинка'],
+    primaryMuscles: ['Задняя дельта'],
+    secondaryMuscles: ['Внешние ротаторы плеча'],
+    aiChecks: ['Симметрия тяги', 'Положение плеч']
+  },
+  {
+    id: 'bicep-curl',
+    name: 'Dumbbell Curl',
+    nameRu: 'Подъём гантелей на бицепс',
+    muscleGroup: 'arms',
+    muscleGroupRu: 'Руки',
+    difficulty: 'beginner',
+    difficultyRu: 'Начальный',
+    description: 'Классическое упражнение для развития бицепсов.',
+    tips: [
+      'Локти прижаты к корпусу',
+      'Не раскачивайтесь',
+      'Полный контроль в негативной фазе'
+    ],
+    equipment: ['Гантели'],
+    primaryMuscles: ['Бицепс'],
+    secondaryMuscles: ['Предплечья'],
+    aiChecks: ['Контроль локтей']
+  },
+  {
+    id: 'split-squat',
+    name: 'Bulgarian Split Squat',
+    nameRu: 'Болгарский сплит-присед',
+    muscleGroup: 'legs',
+    muscleGroupRu: 'Ноги',
+    difficulty: 'intermediate',
+    difficultyRu: 'Средний',
+    description: 'Одностороннее упражнение для баланса и силы ног, отлично выравнивает дисбалансы.',
+    tips: [
+      'Держите корпус вертикально',
+      'Толкайте пол передней ногой',
+      'Колено смотрит по линии носка'
+    ],
+    equipment: ['Скамья', 'Гантели/штанга'],
+    primaryMuscles: ['Квадрицепс', 'Ягодичные'],
+    secondaryMuscles: ['Задняя поверхность бедра', 'Кор'],
+    aiChecks: ['Баланс', 'Положение колена']
   }
 ];
 

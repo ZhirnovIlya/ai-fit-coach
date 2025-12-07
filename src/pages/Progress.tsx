@@ -2,8 +2,9 @@ import { Layout } from '@/components/layout/Layout';
 import { WeeklyChart } from '@/components/dashboard/WeeklyChart';
 import { userProfile, weeklyStats } from '@/lib/data';
 import { Progress } from '@/components/ui/progress';
-import { TrendingUp, Target, Calendar, Award } from 'lucide-react';
+import { TrendingUp, Target, Calendar, Award, ActivitySquare } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
+import { useFitnessData } from '@/providers/FitnessDataProvider';
 
 const weightProgress = [
   { week: 'Нед 1', squat: 80, bench: 60, deadlift: 100 },
@@ -22,10 +23,13 @@ const goals = [
 ];
 
 export default function ProgressPage() {
+  const { workoutLogs, aiReports } = useFitnessData();
   const totalWorkouts = weeklyStats.filter(s => s.duration > 0).length;
   const avgCalories = Math.round(
     weeklyStats.reduce((acc, s) => acc + s.calories, 0) / totalWorkouts
   );
+  const savedSessions = workoutLogs.length;
+  const bestAiScore = aiReports[0]?.score ?? null;
 
   return (
     <Layout>
@@ -66,6 +70,13 @@ export default function ProgressPage() {
               <span className="text-sm text-muted-foreground">Уровень</span>
             </div>
             <p className="text-2xl font-bold">{userProfile.level}</p>
+          </div>
+          <div className="rounded-xl border bg-card p-4">
+            <div className="flex items-center gap-2 mb-2">
+              <ActivitySquare className="h-4 w-4 text-primary" />
+              <span className="text-sm text-muted-foreground">Сохранённые сессии</span>
+            </div>
+            <p className="text-2xl font-bold">{savedSessions}</p>
           </div>
         </div>
 
@@ -163,6 +174,37 @@ export default function ProgressPage() {
             })}
           </div>
         </div>
+
+        {aiReports.length > 0 && (
+          <div className="rounded-2xl border bg-card p-6 mt-6">
+            <h3 className="text-lg font-semibold mb-3">AI-оценки техники</h3>
+            <p className="text-sm text-muted-foreground mb-4">
+              Лучшая оценка: {bestAiScore ?? '—'}. Последние рекомендации помогут сфокусироваться на слабых местах.
+            </p>
+            <div className="grid sm:grid-cols-2 gap-3">
+              {aiReports.slice(0, 4).map((report) => (
+                <div key={report.id} className="rounded-xl border bg-muted/40 p-3">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-xs text-muted-foreground">{new Date(report.timestamp).toLocaleDateString()}</p>
+                      <p className="font-semibold">{report.exerciseName}</p>
+                    </div>
+                    <span className="text-lg font-bold">{report.score}</span>
+                  </div>
+                  {report.focusAreas.length > 0 && (
+                    <div className="flex flex-wrap gap-2 mt-2">
+                      {report.focusAreas.map((area) => (
+                        <span key={area} className="text-xs rounded-full bg-background px-2 py-1 border">
+                          {area}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </Layout>
   );

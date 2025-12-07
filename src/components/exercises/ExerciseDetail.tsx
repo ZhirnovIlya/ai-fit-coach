@@ -1,7 +1,7 @@
 import { Exercise } from '@/lib/data';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { X, Play, CheckCircle2 } from 'lucide-react';
+import { X, Play, CheckCircle2, Dumbbell, Sparkles } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface ExerciseDetailProps {
@@ -42,6 +42,44 @@ export function ExerciseDetail({ exercise, onClose }: ExerciseDetailProps) {
             <p className="text-muted-foreground">{exercise.description}</p>
           </div>
 
+          {(exercise.equipment || exercise.primaryMuscles) && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {exercise.equipment && (
+                <div className="rounded-lg border p-3">
+                  <div className="flex items-center gap-2 text-sm font-semibold mb-2">
+                    <Dumbbell className="h-4 w-4 text-primary" />
+                    Оборудование
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {exercise.equipment.map((item) => (
+                      <Badge key={item} variant="secondary" className="text-xs">
+                        {item}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {exercise.primaryMuscles && (
+                <div className="rounded-lg border p-3">
+                  <div className="text-sm font-semibold mb-2">Целевые мышцы</div>
+                  <div className="flex flex-wrap gap-2">
+                    {exercise.primaryMuscles.map((muscle) => (
+                      <Badge key={muscle} variant="outline" className="text-xs">
+                        {muscle}
+                      </Badge>
+                    ))}
+                    {exercise.secondaryMuscles?.map((muscle) => (
+                      <Badge key={muscle} variant="secondary" className="text-xs">
+                        {muscle}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
           <div>
             <h3 className="font-medium mb-3">Ключевые моменты техники</h3>
             <ul className="space-y-2">
@@ -53,6 +91,22 @@ export function ExerciseDetail({ exercise, onClose }: ExerciseDetailProps) {
               ))}
             </ul>
           </div>
+
+          {exercise.aiChecks && (
+            <div className="rounded-lg border bg-muted/30 p-4 space-y-2">
+              <div className="flex items-center gap-2 text-sm font-semibold">
+                <Sparkles className="h-4 w-4 text-primary" />
+                Что контролирует AI
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {exercise.aiChecks.map((item) => (
+                  <Badge key={item} variant="secondary" className="text-xs">
+                    {item}
+                  </Badge>
+                ))}
+              </div>
+            </div>
+          )}
 
           <div className="pt-4 border-t">
             <Button className="w-full gap-2 bg-gradient-energy hover:opacity-90">

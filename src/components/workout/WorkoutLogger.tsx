@@ -1,11 +1,13 @@
 import { useState } from 'react';
-import { exercises, Exercise } from '@/lib/data';
+import { Exercise } from '@/lib/data';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Plus, Trash2, Save, Video } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
+import { useFitnessData } from '@/providers/FitnessDataProvider';
+import { analyzeTechnique } from '@/lib/ai-engine';
 
 interface WorkoutSet {
   reps: number;
@@ -13,6 +15,7 @@ interface WorkoutSet {
 }
 
 export function WorkoutLogger() {
+  const { exercises, addWorkoutLog, saveAiReport } = useFitnessData();
   const [selectedExercise, setSelectedExercise] = useState<Exercise | null>(null);
   const [sets, setSets] = useState<WorkoutSet[]>([{ reps: 10, weight: 0 }]);
   const [notes, setNotes] = useState('');
@@ -44,6 +47,27 @@ export function WorkoutLogger() {
       return;
     }
 
+    const aiReport = analyzeTechnique(selectedExercise);
+
+    addWorkoutLog({
+      date: new Date().toISOString(),
+      exerciseId: selectedExercise.id,
+      sets,
+      notes,
+      aiScore: aiReport.score,
+      aiTips: aiReport.focusAreas,
+    });
+
+    saveAiReport({
+      exerciseId: selectedExercise.id,
+      exerciseName: selectedExercise.nameRu,
+      score: aiReport.score,
+      verdict: aiReport.verdict,
+      focusAreas: aiReport.focusAreas,
+      metrics: aiReport.metrics.map((m) => ({ label: m.label, value: m.value, unit: m.unit, status: m.status })),
+      frameCount: aiReport.frameCount,
+    });
+
     toast({
       title: 'Тренировка сохранена!',
       description: `${selectedExercise.nameRu}: ${sets.length} подходов записано`
@@ -60,11 +84,11 @@ export function WorkoutLogger() {
       <h2 className="text-xl font-bold mb-6">Записать тренировку</h2>
 
       <div className="space-y-6">
-        <div className="space-y-2">
-          <Label>Упражнение</Label>
-          <Select
-            value={selectedExercise?.id}
-            onValueChange={(value) => {
+      <div className="space-y-2">
+        <Label>Упражнение</Label>
+        <Select
+          value={selectedExercise?.id}
+          onValueChange={(value) => {
               const ex = exercises.find(e => e.id === value);
               setSelectedExercise(ex || null);
             }}
